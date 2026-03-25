@@ -77,6 +77,16 @@ Handles admission forms, applications, approvals, and admission records.
 - Student category assignment
 - Disabled student tracking
 - Admission configuration
+- Enquiry pipeline (CRM-style: New → Follow-up → Applied → Approved → Enrolled)
+- Walk-in and online enquiry capture
+- Admission test scheduling
+- Document upload and verification
+- RTE 25% quota tracking and management
+- Lead source tracking (how the enquiry came in)
+- Sibling discount / referral tracking at admission stage
+- Admission fee collection (linked to Fees module)
+- Admission funnel analytics and conversion reports
+- Seat availability management per class-section
 
 ## What This Module Achieves
 
@@ -147,9 +157,14 @@ Manages classes, sections, subjects, and academic assignments.
 - Subject management
 - Subject groups
 - Class teacher assignment
-- Student promotion
-- Class timetable
-- Teacher timetable
+- Subject teacher assignment per class-section
+- Student promotion (bulk year-end promotion with detention / transfer support)
+- Class timetable (period-by-period scheduling)
+- Teacher timetable (what each teacher teaches, when)
+- Timetable conflict detection (no double-booking of teacher or room)
+- Substitution management (cover for absent teachers)
+- Free period tracking
+- Timetable publish to parent portal and app
 
 ## What This Module Achieves
 
@@ -178,11 +193,17 @@ Maintains attendance logs, leave approvals, and attendance reporting.
 
 ## Core Features
 
-- Daily attendance entry
+- Daily attendance entry (class-wise)
+- Period-wise attendance (secondary schools)
 - Attendance by date
 - Leave requests
 - Leave approval
 - QR attendance integration
+- Biometric / RFID integration (hardware devices)
+- Facial recognition attendance (future)
+- Parent SMS / WhatsApp alert on absence
+- Low attendance threshold alerts
+- Monthly and annual attendance summary reports
 - Attendance reporting
 
 ## What This Module Achieves
@@ -211,13 +232,21 @@ Handles exam scheduling, marks entry, report cards, and academic evaluation.
 
 ## Core Features
 
-- Exam groups
+- Exam groups and exam types (Unit Test, Half-yearly, Annual, Board)
 - Exam scheduling
-- Marks entry
-- Marks grading
+- Admit card / hall ticket generation
+- Marks entry (subject-wise, per exam)
+- Marks grading (GPA, letter grade, percentage)
+- CBSE CCE / CWA grading format support
+- ICSE report card format support
+- NEP 2020 Holistic Progress Card generation
+- Co-scholastic and activities grading
+- Competency-based assessment support
+- Tabulation register generation
 - Marksheet generation
-- Admit card generation
-- Exam reports
+- Rank and merit list generation
+- Result publishing to parent portal
+- Exam reports and academic performance analytics
 
 ## What This Module Achieves
 
@@ -277,15 +306,25 @@ Handles invoices, fee collection, discounts, and reminders.
 
 ## Core Features
 
-- Fee structure management
-- Fee groups
-- Fee types
+- Fee structure management (line items, billing cycles)
+- Fee groups and fee types
+- Installment and due date management
+- Late fee automation (per day, after grace period)
+- Individual student fee override (different from class-level structure)
+- Bulk invoice generation (class-wise, year-wise)
 - Fee collection
-- Offline payments
-- Discounts
-- Fee carry forward
-- Fee reminders
-- Payment tracking
+- Offline payments (cash, cheque, bank transfer, UPI — manual recording)
+- Online payment collection (Razorpay, PayU, UPI payment gateway)
+- Payment link generation (shareable via WhatsApp/SMS)
+- PDF receipt generation
+- Discounts and concession management
+- Scholarship tracking
+- RTE fee reimbursement tracking
+- Fee carry forward / arrears management
+- Fee reminders (SMS, WhatsApp, email)
+- Payment tracking and fee collection MIS reports
+- Tally export for accounting integration
+- Idempotency controls (prevent duplicate payment recording)
 
 ## What This Module Achieves
 
@@ -343,14 +382,17 @@ Maintains staff data, payroll, and leave management.
 
 ## Core Features
 
-- Staff directory
-- Staff attendance
-- Payroll management
+- Staff directory with complete profiles
+- Staff attendance (daily marking: Present, Absent, Half-Day, On Leave, Holiday)
+- Biometric / RFID attendance for staff (hardware integration, future)
+- Payroll management (see Module 32 — Payroll Management for full detail)
 - Leave requests
-- Leave approval
+- Leave approval workflow
 - Department management
 - Designation management
-- Teacher performance ratings
+- Employment type management (permanent, contract, part-time, probation)
+- Staff document management (certificates, offer letters)
+- Teacher performance ratings and appraisal (future)
 
 ## What This Module Achieves
 
@@ -377,12 +419,19 @@ Manages email, SMS, notifications, and announcements.
 
 ## Core Features
 
-- Notice board
-- Email sending
-- SMS sending
-- Message templates
-- Communication logs
-- Scheduled messages
+- Notice board (digital announcements)
+- Email sending (via SES / SendGrid / Mailgun)
+- SMS sending (via MSG91 / Textlocal / bulk SMS providers)
+- DLT / TRAI compliance for SMS (sender ID, template registration)
+- WhatsApp Business API integration (Meta / Twilio / Gupshup)
+- FCM push notifications (Android and iOS)
+- Message templates with dynamic variables ({{student_name}}, {{amount}})
+- Opt-in / opt-out management (TRAI and WhatsApp policy compliance)
+- Scheduled messages and bulk broadcast
+- Communication logs and delivery tracking
+- Parent-teacher direct messaging
+- Circular management with PDF attachments
+- Channel fallback logic (if Push fails → SMS)
 
 ## What This Module Achieves
 
@@ -498,9 +547,13 @@ Tracks books, borrowers, and return status.
 
 ## Core Features
 
-- Book catalog
-- Issue and return
-- Library members
+- Book catalog (ISBN, author, publisher, category)
+- Barcode / RFID integration for book identification
+- Issue and return tracking
+- Fine management for overdue books
+- Book reservation
+- Overdue auto-notices to borrowers
+- Library membership management (students and staff)
 - Library reports
 
 ## What This Module Achieves
@@ -555,11 +608,15 @@ Tracks routes, vehicles, and student transport assignments.
 
 ## Core Features
 
-- Routes
-- Vehicles
-- Pickup points
-- Vehicle assignment
-- Transport fees
+- Routes and stop / pickup point management
+- Vehicle management (bus, van, tempo)
+- Driver and attendant management
+- Student-to-route assignment
+- Transport fee auto-assignment (linked to Fees module)
+- GPS real-time tracking integration (hardware)
+- Parent ETA and location alerts
+- Vehicle maintenance logs
+- Fuel log management
 
 ## What This Module Achieves
 
@@ -585,9 +642,14 @@ Tracks hostels, rooms, and student allocations.
 
 ## Core Features
 
-- Hostel management
-- Room types
-- Room allocation
+- Hostel and dormitory definition (multiple blocks / buildings)
+- Room types (AC, Non-AC, dormitory)
+- Room allocation and bed / seat assignment
+- Student hostel registration
+- Hostel fee integration (linked to Fees module)
+- Mess management (menu planning and mess billing)
+- Warden management and duty roster
+- Visitor management and gate entry log
 
 ## What This Module Achieves
 
@@ -726,9 +788,12 @@ Maintains academic calendar.
 
 ## Core Features
 
-- Event management
-- Holiday types
-- Calendar display
+- Event management (school events, functions, sports day)
+- Holiday types and working day configuration
+- Academic calendar setup (term dates, exam weeks)
+- Calendar display (school-wide and class-wise views)
+- Parent-facing calendar view (visible in parent portal and app)
+- iCal / Google Calendar sync (export school calendar)
 
 ## What This Module Achieves
 
@@ -836,12 +901,17 @@ Aggregates reports across modules.
 
 ## Core Features
 
-- Student reports
-- Finance reports
-- Attendance reports
-- Exam reports
-- HR reports
-- Audit logs
+- Student reports (academic performance, progress over years)
+- Finance reports (fee collection MIS, outstanding, arrears, concession summary)
+- Attendance reports (class-wise, student-wise, monthly summaries)
+- Exam reports (marksheets, rank lists, subject-wise analytics)
+- HR reports (staff attendance, leave summary, payroll summaries)
+- Admission funnel reports (enquiry to enrollment conversion)
+- UDISE data export (annual government compliance report)
+- Executive dashboard (principal / management KPI view)
+- Audit logs (system-wide, immutable, filterable)
+- Custom report builder (future)
+- AI-powered predictive analytics (future)
 
 ## What This Module Achieves
 
@@ -992,5 +1062,161 @@ Routes system events into communication channels and ensures reliable message de
 - Communication System
 - Events System
 - All modules that generate notifications
+
+---
+
+# 32 — Payroll Management
+
+## Purpose
+
+Process **staff salaries with full Indian statutory compliance**.
+
+## Responsibilities
+
+Calculates monthly payroll, deductions, and generates statutory reports.
+
+## Core Features
+
+- Salary structure definition (basic, HRA, DA, allowances, deductions)
+- Monthly payroll processing (one-click run)
+- PF (Provident Fund) computation and ECR file export
+- ESI computation
+- Professional Tax / TDS deduction
+- Gratuity calculation
+- Arrears and advance management
+- Pay slip generation (PDF, email to staff)
+- Bank transfer export file (NEFT / RTGS format)
+- Form 16 generation (annual)
+- Payroll reports (monthly, annual, department-wise)
+
+## What This Module Achieves
+
+- Automated statutory-compliant payroll
+- Eliminates manual salary calculation errors
+- Generates all documents needed for bank transfer and government filings
+
+## Dependencies
+
+- Human Resource Management
+- Financial Accounting
+- Reports
+
+---
+
+# 33 — Parent Portal & Mobile App
+
+## Purpose
+
+Provide **parents with real-time visibility** into their child's school life.
+
+## Responsibilities
+
+Serves as the primary parent-facing interface across web and mobile.
+
+## Core Features
+
+- Parent web portal (browser-based, no app install required)
+- Android mobile app (parent-facing)
+- iOS mobile app (parent-facing)
+- Teacher mobile app (attendance, marks, homework)
+- Fee payment and payment history view
+- Fee receipt download
+- Student attendance view (daily, monthly)
+- Marks and report card view and download
+- Timetable view
+- Homework and assignment view
+- Circular and notice download
+- School event calendar
+- Push notification preferences management
+- Real-time absence and low attendance alerts
+- Transport location / ETA view (when GPS module active)
+- Direct messaging with teachers (future)
+
+## What This Module Achieves
+
+- Increases parent engagement and satisfaction
+- Reduces calls to school office for routine information
+- Enables online fee payment — reduces cash handling
+
+## Dependencies
+
+- Students
+- Fees
+- Attendance
+- Examinations
+- Communication
+- Notification Engine
+
+---
+
+# 34 — Health & Medical Management
+
+## Purpose
+
+Maintain **student and staff health records** within the school system.
+
+## Responsibilities
+
+Tracks medical history, health incidents, and health-related documentation.
+
+## Core Features
+
+- Student health profile (blood group, known allergies, chronic conditions)
+- Medical history records
+- Vaccination tracking and schedule
+- Doctor / nurse visit log
+- Illness and injury incident reports
+- Health certificates
+- Staff health records (basic)
+- Emergency medical contact information
+
+## What This Module Achieves
+
+- Centralized health data accessible during emergencies
+- Vaccination and health compliance tracking
+- Reduced reliance on paper-based health registers
+
+## Dependencies
+
+- Students
+- Human Resource Management
+
+---
+
+# 35 — UDISE & Government Compliance
+
+## Purpose
+
+Generate **government-mandated reports and compliance data** for Indian school regulations.
+
+## Responsibilities
+
+Aggregates data from across modules and formats it for government submission.
+
+## Core Features
+
+- UDISE+ data compilation and export (annual)
+- Aadhaar seeding status report (students and staff)
+- RTE 25% quota utilization report
+- Scholarship and DBT (Direct Benefit Transfer) tracking
+- Category-wise student count (SC / ST / OBC / EWS / General)
+- Minority institution reporting
+- Board-affiliation compliance data
+- State education department report formats
+- Disability and differently-abled student tracking
+
+## What This Module Achieves
+
+- Simplifies the annual UDISE submission process
+- Ensures RTE quota compliance is auditable
+- Supports government scholarship disbursement tracking
+
+## Dependencies
+
+- Students
+- Admissions
+- Reports
+
+---
 
 # End of Document

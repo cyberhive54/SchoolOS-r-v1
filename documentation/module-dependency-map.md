@@ -123,6 +123,7 @@ Modules:
 - transport
 - hostel
 - library
+- health-medical
 - behaviour-management
 - student-portfolio
 - certificates
@@ -150,6 +151,7 @@ Modules:
 
 - fees
 - financial-accounting
+- payroll
 - inventory
 
 Dependencies:
@@ -172,6 +174,7 @@ Modules:
 
 - communication
 - notification-engine
+- parent-portal
 
 Dependencies:
 
@@ -218,6 +221,7 @@ Analytics and reporting modules.
 Modules:
 
 - reports-analytics
+- udise-compliance
 
 Dependencies:
 
@@ -260,6 +264,7 @@ Student Services Layer
 ├── transport
 ├── hostel
 ├── library
+├── health-medical
 ├── behaviour-management
 ├── student-portfolio
 ├── certificates
@@ -269,12 +274,14 @@ Financial Layer
 │
 ├── fees
 ├── financial-accounting
+├── payroll
 └── inventory
 
 Communication Layer
 │
 ├── communication
-└── notification-engine
+├── notification-engine
+└── parent-portal
 
 Administrative Operations Layer
 │
@@ -285,7 +292,8 @@ Administrative Operations Layer
 
 Analytics Layer
 │
-└── reports-analytics
+├── reports-analytics
+└── udise-compliance
 
 ---
 
