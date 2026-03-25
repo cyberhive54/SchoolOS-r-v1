@@ -1,0 +1,9 @@
+{
+  "document_type": "birth_certificate",
+  "title": "Birth Certificate",
+  "file_url": "https://storage.schoolos.com/schools/school-id/students/student-id/birth-cert.pdf",
+  "file_name": "birth-certificate.pdf",
+  "file_size_kb": 512,
+  "mime_type": "application/pdf",
+  "notes": "Certified copy obtained from municipal office"
+}

@@ -1,0 +1,15 @@
+{
+  "id": "doc-0000-0000-0000-000000000001",
+  "school_id": "12e9720e-4f8e-4630-8bc1-ca7c6a1cfca9",
+  "student_id": "student-00-0000-0000-000000000001",
+  "document_type": "birth_certificate",
+  "title": "Birth Certificate",
+  "file_url": "https://storage.schoolos.com/schools/school-id/students/student-id/birth-cert.pdf",
+  "file_name": "birth-certificate.pdf",
+  "file_size_kb": 512,
+  "mime_type": "application/pdf",
+  "uploaded_by": "user-000-0000-0000-000000000001",
+  "notes": "Certified copy obtained from municipal office",
+  "created_at": "2025-06-01T08:00:00.000Z",
+  "updated_at": "2025-06-01T08:00:00.000Z"
+}

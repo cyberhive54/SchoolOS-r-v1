@@ -37,6 +37,8 @@ import { DepartmentEntity } from '../../modules/hr/entities/department.entity';
 import { DesignationEntity } from '../../modules/hr/entities/designation.entity';
 import { LeaveTypeEntity } from '../../modules/hr/entities/leave-type.entity';
 import { StaffEntity } from '../../modules/hr/entities/staff.entity';
+import { TimetablePeriodEntity } from '../../modules/academics/entities/timetable-period.entity';
+import { StudentSiblingEntity } from '../../modules/students/entities/student-sibling.entity';
 import { join } from 'path';
 import { resolveMigrationDatabaseConnectionOptions } from '../connection-options';
 
@@ -432,6 +434,57 @@ async function seed(): Promise<void> {
       if (!existing) {
         await staffRepo.save(staffRepo.create({ id: uuidv4(), school_id: school.id, user_id: null, employee_id: s.employee_id, first_name: s.first_name, last_name: s.last_name, phone: s.phone, join_date: s.join_date, employment_type: s.employment_type, status: 'active', department_id: s.department_id, designation_id: s.designation_id, gender: s.gender, date_of_birth: null, blood_group: null, alternate_phone: null, personal_email: null, salary_grade: null }));
         console.log(`✓ Staff seeded: ${s.first_name} ${s.last_name} (${s.employee_id})`);
+      }
+    }
+
+    // ── Seed timetable periods ───────────────────────────────────────────────
+    const periodRepo = dataSource.getRepository(TimetablePeriodEntity);
+    const periodDefs = [
+      { name: 'Period 1',     period_number: 1, start_time: '08:00', end_time: '08:45', is_break: false },
+      { name: 'Period 2',     period_number: 2, start_time: '08:45', end_time: '09:30', is_break: false },
+      { name: 'Period 3',     period_number: 3, start_time: '09:30', end_time: '10:15', is_break: false },
+      { name: 'Recess',       period_number: 4, start_time: '10:15', end_time: '10:30', is_break: true  },
+      { name: 'Period 4',     period_number: 5, start_time: '10:30', end_time: '11:15', is_break: false },
+      { name: 'Period 5',     period_number: 6, start_time: '11:15', end_time: '12:00', is_break: false },
+      { name: 'Lunch Break',  period_number: 7, start_time: '12:00', end_time: '12:30', is_break: true  },
+      { name: 'Period 6',     period_number: 8, start_time: '12:30', end_time: '13:15', is_break: false },
+    ];
+    let periodsInserted = 0;
+    for (const p of periodDefs) {
+      const existing = await periodRepo.findOne({
+        where: { school_id: school.id, academic_year_id: academicYear.id, period_number: p.period_number },
+      });
+      if (!existing) {
+        await periodRepo.save(periodRepo.create({
+          id: uuidv4(),
+          school_id: school.id,
+          academic_year_id: academicYear.id,
+          name: p.name,
+          period_number: p.period_number,
+          start_time: p.start_time,
+          end_time: p.end_time,
+          is_break: p.is_break,
+          is_active: true,
+        }));
+        periodsInserted++;
+      }
+    }
+    if (periodsInserted > 0) console.log(`✓ Timetable periods seeded: ${periodsInserted} periods`);
+
+    // ── Seed sibling links (students 1 & 2) ─────────────────────────────────
+    const siblingRepo = dataSource.getRepository(StudentSiblingEntity);
+    const student1 = await studentRepo.findOne({ where: { school_id: school.id, admission_no: 'ADM-2025-001' } });
+    const student2 = await studentRepo.findOne({ where: { school_id: school.id, admission_no: 'ADM-2025-002' } });
+    if (student1 && student2) {
+      const existingLink = await siblingRepo.findOne({
+        where: { school_id: school.id, student_id: student1.id, sibling_id: student2.id },
+      });
+      if (!existingLink) {
+        await siblingRepo.save([
+          siblingRepo.create({ id: uuidv4(), school_id: school.id, student_id: student1.id, sibling_id: student2.id }),
+          siblingRepo.create({ id: uuidv4(), school_id: school.id, student_id: student2.id, sibling_id: student1.id }),
+        ]);
+        console.log(`✓ Sibling link seeded: ${student1.first_name} ↔ ${student2.first_name}`);
       }
     }
 

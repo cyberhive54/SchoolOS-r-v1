@@ -13,6 +13,9 @@ import { SubjectGroupItemEntity } from './entities/subject-group-item.entity';
 import { ClassSectionSubjectEntity } from './entities/class-section-subject.entity';
 import { ClassTeacherAssignmentEntity } from './entities/class-teacher-assignment.entity';
 import { TeacherSubjectAssignmentEntity } from './entities/teacher-subject-assignment.entity';
+import { TimetablePeriodEntity } from './entities/timetable-period.entity';
+import { TimetableSlotEntity } from './entities/timetable-slot.entity';
+import { TimetableSubstitutionEntity } from './entities/timetable-substitution.entity';
 
 // Controllers
 import { YearsController } from './endpoints/years/controller';
@@ -22,6 +25,9 @@ import { ClassSectionsController } from './endpoints/class-sections/controller';
 import { SubjectsController } from './endpoints/subjects/controller';
 import { SubjectGroupsController } from './endpoints/subject-groups/controller';
 import { PromotionsController } from './endpoints/promotions/controller';
+import { TimetablePeriodsController } from './endpoints/timetable-periods/controller';
+import { TimetableSlotsController } from './endpoints/timetable-slots/controller';
+import { TimetableSubstitutionsController } from './endpoints/timetable-substitutions/controller';
 
 // Services
 import { YearsService } from './endpoints/years/service';
@@ -32,6 +38,9 @@ import { SubjectsService } from './endpoints/subjects/service';
 import { SubjectGroupsService } from './endpoints/subject-groups/service';
 import { PromotionsService, PROMOTION_QUEUE } from './endpoints/promotions/service';
 import { PromotionProcessor } from './endpoints/promotions/promotion.processor';
+import { TimetablePeriodsService } from './endpoints/timetable-periods/service';
+import { TimetableSlotsService } from './endpoints/timetable-slots/service';
+import { TimetableSubstitutionsService } from './endpoints/timetable-substitutions/service';
 
 @Module({
   imports: [
@@ -47,6 +56,9 @@ import { PromotionProcessor } from './endpoints/promotions/promotion.processor';
       ClassSectionSubjectEntity,
       ClassTeacherAssignmentEntity,
       TeacherSubjectAssignmentEntity,
+      TimetablePeriodEntity,
+      TimetableSlotEntity,
+      TimetableSubstitutionEntity,
     ]),
   ],
   controllers: [
@@ -57,6 +69,9 @@ import { PromotionProcessor } from './endpoints/promotions/promotion.processor';
     SubjectsController,
     SubjectGroupsController,
     PromotionsController,
+    TimetablePeriodsController,
+    TimetableSlotsController,
+    TimetableSubstitutionsController,
   ],
   providers: [
     YearsService,
@@ -67,6 +82,9 @@ import { PromotionProcessor } from './endpoints/promotions/promotion.processor';
     SubjectGroupsService,
     PromotionsService,
     PromotionProcessor,
+    TimetablePeriodsService,
+    TimetableSlotsService,
+    TimetableSubstitutionsService,
   ],
   exports: [
     YearsService,
@@ -74,6 +92,8 @@ import { PromotionProcessor } from './endpoints/promotions/promotion.processor';
     SectionsService,
     ClassSectionsService,
     SubjectsService,
+    TimetablePeriodsService,
+    TimetableSlotsService,
   ],
 })
 export class AcademicsModule {}

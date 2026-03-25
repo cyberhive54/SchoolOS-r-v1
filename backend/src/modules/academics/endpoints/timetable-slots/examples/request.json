@@ -1,0 +1,9 @@
+{
+  "academic_year_id": "a1b2c3d4-0000-0000-0000-000000000001",
+  "class_section_id": "cs-0000-0000-0000-000000000001",
+  "timetable_period_id": "b2c3d4e5-0000-0000-0000-000000000001",
+  "day_of_week": 1,
+  "subject_id": "sub-0000-0000-0000-000000000001",
+  "staff_id": "staff-000-0000-0000-000000000001",
+  "is_free_period": false
+}

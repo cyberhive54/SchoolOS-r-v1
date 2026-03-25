@@ -10,6 +10,7 @@ import { LeaveTypeEntity } from './entities/leave-type.entity';
 import { LeaveAllocationEntity } from './entities/leave-allocation.entity';
 import { LeaveRequestEntity } from './entities/leave-request.entity';
 import { StaffAttendanceEntity } from './entities/staff-attendance.entity';
+import { StaffDocumentEntity } from './entities/staff-document.entity';
 
 // ── External entities needed for staff creation ───────────────────────────────
 import { UserEntity } from '../users/entities/user.entity';
@@ -24,6 +25,7 @@ import { LeaveTypesController } from './endpoints/leave-types/controller';
 import { LeaveAllocationsController } from './endpoints/leave-allocations/controller';
 import { LeaveRequestsController } from './endpoints/leave-requests/controller';
 import { AttendanceController } from './endpoints/attendance/controller';
+import { StaffDocumentsController } from './endpoints/staff-documents/controller';
 
 // ── Services ──────────────────────────────────────────────────────────────────
 import { DepartmentsService } from './endpoints/departments/service';
@@ -34,6 +36,7 @@ import { LeaveTypesService } from './endpoints/leave-types/service';
 import { LeaveAllocationsService } from './endpoints/leave-allocations/service';
 import { LeaveRequestsService } from './endpoints/leave-requests/service';
 import { AttendanceService } from './endpoints/attendance/service';
+import { StaffDocumentsService } from './endpoints/staff-documents/service';
 
 @Module({
   imports: [
@@ -46,6 +49,7 @@ import { AttendanceService } from './endpoints/attendance/service';
       LeaveAllocationEntity,
       LeaveRequestEntity,
       StaffAttendanceEntity,
+      StaffDocumentEntity,
       // External — needed for creating user accounts when staff is added
       UserEntity,
       SchoolMembershipEntity,
@@ -60,6 +64,7 @@ import { AttendanceService } from './endpoints/attendance/service';
     LeaveAllocationsController,
     LeaveRequestsController,
     AttendanceController,
+    StaffDocumentsController,
   ],
   providers: [
     DepartmentsService,
@@ -70,6 +75,7 @@ import { AttendanceService } from './endpoints/attendance/service';
     LeaveAllocationsService,
     LeaveRequestsService,
     AttendanceService,
+    StaffDocumentsService,
   ],
   exports: [
     StaffService,

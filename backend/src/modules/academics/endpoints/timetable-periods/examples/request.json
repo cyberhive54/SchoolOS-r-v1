@@ -1,0 +1,9 @@
+{
+  "academic_year_id": "a1b2c3d4-0000-0000-0000-000000000001",
+  "name": "Period 1",
+  "period_number": 1,
+  "start_time": "08:00",
+  "end_time": "08:45",
+  "is_break": false,
+  "is_active": true
+}

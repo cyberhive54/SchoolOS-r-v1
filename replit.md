@@ -1,96 +1,130 @@
-# Workspace
+# SchoolOS — Multi-Tenant School ERP
 
 ## Overview
 
-pnpm workspace monorepo using TypeScript. Each package manages its own dependencies.
+SchoolOS is a production-grade, multi-tenant SaaS School ERP for Indian K-12 schools.
+Competitive with Entab, MyClassboard, and Vidyalaya — focused on the Indian market.
 
 ## Stack
 
 - **Monorepo tool**: pnpm workspaces
-- **Node.js version**: 24
-- **Package manager**: pnpm
-- **TypeScript version**: 5.9
-- **API framework**: Express 5
-- **Database**: PostgreSQL + Drizzle ORM
-- **Validation**: Zod (`zod/v4`), `drizzle-zod`
-- **API codegen**: Orval (from OpenAPI spec)
-- **Build**: esbuild (CJS bundle)
-
-## Structure
-
-```text
-artifacts-monorepo/
-├── artifacts/              # Deployable applications
-│   └── api-server/         # Express API server
-├── lib/                    # Shared libraries
-│   ├── api-spec/           # OpenAPI spec + Orval codegen config
-│   ├── api-client-react/   # Generated React Query hooks
-│   ├── api-zod/            # Generated Zod schemas from OpenAPI
-│   └── db/                 # Drizzle ORM schema + DB connection
-├── scripts/                # Utility scripts (single workspace package)
-│   └── src/                # Individual .ts scripts, run via `pnpm --filter @workspace/scripts run <script>`
-├── pnpm-workspace.yaml     # pnpm workspace (artifacts/*, lib/*, lib/integrations/*, scripts)
-├── tsconfig.base.json      # Shared TS options (composite, bundler resolution, es2022)
-├── tsconfig.json           # Root TS project references
-└── package.json            # Root package with hoisted devDeps
-```
-
-## TypeScript & Composite Projects
-
-Every package extends `tsconfig.base.json` which sets `composite: true`. The root `tsconfig.json` lists all packages as project references. This means:
-
-- **Always typecheck from the root** — run `pnpm run typecheck` (which runs `tsc --build --emitDeclarationOnly`). This builds the full dependency graph so that cross-package imports resolve correctly. Running `tsc` inside a single package will fail if its dependencies haven't been built yet.
-- **`emitDeclarationOnly`** — we only emit `.d.ts` files during typecheck; actual JS bundling is handled by esbuild/tsx/vite...etc, not `tsc`.
-- **Project references** — when package A depends on package B, A's `tsconfig.json` must list B in its `references` array. `tsc --build` uses this to determine build order and skip up-to-date packages.
-
-## Root Scripts
-
-- `pnpm run build` — runs `typecheck` first, then recursively runs `build` in all packages that define it
-- `pnpm run typecheck` — runs `tsc --build --emitDeclarationOnly` using project references
+- **Backend**: NestJS 11, TypeORM, PostgreSQL, Redis + BullMQ (port 3001)
+- **Frontend**: Next.js 15, React, TypeScript (port 5000)
+- **Auth**: OTP 2FA + JWT, RBAC with permission guards
+- **Queue**: BullMQ (Redis) for async jobs (promotions, bulk import, leave allocation)
+- **Multi-tenancy**: `school_id` on every table; `X-School-ID` header; composite indexes always start with `school_id`
 
 ## Packages
 
-### `artifacts/api-server` (`@workspace/api-server`)
+| Package | Path | Description |
+|---------|------|-------------|
+| `schoolos-backend` | `backend/` | NestJS 11 API — all modules, migrations, seeds |
+| `schoolos-frontend` | `frontend/` | Next.js 15 frontend — dashboard UI |
+| `@schoolos/config` | `packages/config/` | Shared PERMISSIONS const, role defaults |
+| `@schoolos/types` | `packages/types/` | Shared TypeScript types (AuthUser, etc.) |
 
-Express 5 API server. Routes live in `src/routes/` and use `@workspace/api-zod` for request and response validation and `@workspace/db` for persistence.
+## Running
 
-- Entry: `src/index.ts` — reads `PORT`, starts Express
-- App setup: `src/app.ts` — mounts CORS, JSON/urlencoded parsing, routes at `/api`
-- Routes: `src/routes/index.ts` mounts sub-routers; `src/routes/health.ts` exposes `GET /health` (full path: `/api/health`)
-- Depends on: `@workspace/db`, `@workspace/api-zod`
-- `pnpm --filter @workspace/api-server run dev` — run the dev server
-- `pnpm --filter @workspace/api-server run build` — production esbuild bundle (`dist/index.cjs`)
-- Build bundles an allowlist of deps (express, cors, pg, drizzle-orm, zod, etc.) and externalizes the rest
+Servers are NOT auto-started. User will instruct when to start them.
 
-### `lib/db` (`@workspace/db`)
+- **Backend**: `pnpm --filter schoolos-backend run start:dev` (port 3001)
+- **Frontend**: `pnpm --filter schoolos-frontend run dev` (port 5000)
+- **Seed**: `pnpm --filter schoolos-backend run seed`
+- **Migrations**: `pnpm --filter schoolos-backend run migration:run`
 
-Database layer using Drizzle ORM with PostgreSQL. Exports a Drizzle client instance and schema models.
+## Seed credentials
 
-- `src/index.ts` — creates a `Pool` + Drizzle instance, exports schema
-- `src/schema/index.ts` — barrel re-export of all models
-- `src/schema/<modelname>.ts` — table definitions with `drizzle-zod` insert schemas (no models definitions exist right now)
-- `drizzle.config.ts` — Drizzle Kit config (requires `DATABASE_URL`, automatically provided by Replit)
-- Exports: `.` (pool, db, schema), `./schema` (schema only)
+- **Admin email**: `admin@demo.schoolos.com`
+- **Admin password**: `Admin@123`
+- **School UUID**: `12e9720e-4f8e-4630-8bc1-ca7c6a1cfca9`
+- OTP prints to backend console in dev mode
 
-Production migrations are handled by Replit when publishing. In development, we just use `pnpm --filter @workspace/db run push`, and we fallback to `pnpm --filter @workspace/db run push-force`.
+## Migration numbering
 
-### `lib/api-spec` (`@workspace/api-spec`)
+| # | File | Purpose |
+|---|------|---------|
+| 001 | initial-schema | Platform: schools, users, school_memberships, audit_logs |
+| 002 | permissions-table | RBAC: permissions, role_permissions |
+| 003 | academics-core | academic_years, classes, sections, class_sections, subjects, subject_groups |
+| 004 | academics-assignments | class_section_subjects, class_teacher_assignments, teacher_subject_assignments |
+| 005 | class-sections-status | Adds status column to class_sections |
+| 006 | students-core | student_categories, student_houses, students, student_profiles |
+| 007 | students-guardians-enrollments | guardians, student_guardians, student_enrollments |
+| 008 | hr-structure | departments, designations, staff, staff_profiles |
+| 009 | hr-leave | leave_types, leave_allocations, leave_requests |
+| 010 | hr-attendance | staff_attendance |
+| 011 | academics-timetable | timetable_periods, timetable_slots, timetable_substitutions |
+| 012 | students-siblings-documents | student_siblings, student_documents |
+| 013 | hr-staff-documents | staff_documents |
+| **014** | _admissions_ (next) | enquiries, applications, admission tests |
+| **015** | _fees-structure_ (next) | fee_categories, fee_structures, discounts |
+| **016** | _fees-invoices_ (next) | fee_invoices, fee_payments |
 
-Owns the OpenAPI 3.1 spec (`openapi.yaml`) and the Orval config (`orval.config.ts`). Running codegen produces output into two sibling packages:
+## Built Modules (Phase 2)
 
-1. `lib/api-client-react/src/generated/` — React Query hooks + fetch client
-2. `lib/api-zod/src/generated/` — Zod schemas
+| # | Module | Status | Key Endpoints |
+|---|--------|--------|---------------|
+| 1 | Auth | ✅ Complete | OTP login, JWT refresh, RBAC, audit logs |
+| 4 | Academics | ✅ Complete | Years, Classes, Sections, Subjects, Teacher assignments, Timetable (periods/slots/substitutions), Promotions |
+| 5 | Students (SIS) | ✅ Complete | Students CRUD, Guardians, Enrollments, Siblings, Documents, Bulk import |
+| 10 | HR | ✅ Complete | Staff, Departments, Designations, Leave management, Attendance, Staff documents |
 
-Run codegen: `pnpm --filter @workspace/api-spec run codegen`
+## Upcoming Modules (Phase 2 continuation)
 
-### `lib/api-zod` (`@workspace/api-zod`)
+| # | Module | Migrations | Priority |
+|---|--------|-----------|----------|
+| 2 | Admissions | 014 | Next |
+| 8 | Fees | 015-016 | After Admissions |
+| 5 | Student Attendance | 017 | After Fees |
+| 6 | Examinations | 018-019 | After Attendance |
 
-Generated Zod schemas from the OpenAPI spec (e.g. `HealthCheckResponse`). Used by `api-server` for response validation.
+## Architecture Rules
 
-### `lib/api-client-react` (`@workspace/api-client-react`)
+1. **Every table has `school_id`** — first column in all composite indexes
+2. **Entities use TypeORM decorators** — `timestamptz` for all dates, composite `@Index` at class level
+3. **Services**: inject `AuditService`, use `toDto()` mapper, throw `NotFoundException`/`ConflictException`
+4. **Every endpoint folder** needs: `route.md`, `controller.ts`, `service.ts`, `dto/request.dto.ts`, `dto/response.dto.ts`, `permissions.ts`, `tests/*.spec.ts`, `examples/*.json`
+5. **PERMISSIONS const** in `packages/config/src/permissions.ts` — add new permissions there
+6. **Migrations**: class name format `DescriptionTimestamp<num>`, raw SQL in `queryRunner.query()`
 
-Generated React Query hooks and fetch client from the OpenAPI spec (e.g. `useHealthCheck`, `healthCheck`).
+## Code Patterns
 
-### `scripts` (`@workspace/scripts`)
+```ts
+// Service pattern
+@Injectable()
+export class XService {
+  constructor(
+    @InjectRepository(XEntity) private readonly xRepo: Repository<XEntity>,
+    private readonly auditService: AuditService,
+  ) {}
+  async create(dto: CreateXDto, user: AuthUser): Promise<XDto> { /* ... */ }
+  private toDto(x: XEntity): XDto { /* ... */ }
+}
 
-Utility scripts package. Each script is a `.ts` file in `src/` with a corresponding npm script in `package.json`. Run scripts via `pnpm --filter @workspace/scripts run <script>`. Scripts can import any workspace package (e.g., `@workspace/db`) by adding it as a dependency in `scripts/package.json`.
+// Controller pattern
+@Controller('module/resource')
+export class XController {
+  @Post()
+  @RequirePermissions(PERMISSIONS.X_CREATE)
+  create(@Body() dto: CreateXDto, @CurrentUser() user: AuthUser) { ... }
+}
+```
+
+## Market Differentiators
+
+- Same-day school onboarding
+- Mandatory OTP 2FA
+- WhatsApp-first communication
+- Transparent pricing (no per-student pricing surprises)
+- NEP 2020 compliance (Holistic Progress Card, competency-based assessment)
+- UDISE compliance reporting
+
+## Key Documentation Files
+
+- `documentation/module-list.md` — All 35 modules with features
+- `documentation/module-dependency-map.md` — Layer-based dependency ordering
+- `Progress-track/MARKET-RESEARCH.md` — Competitor analysis, pricing, battlecards
+- `documentation/modules-docs/` — Per-module spec files (academics, students, hr, fees, admissions)
+- `documentation/api-style-guide_1773725741508.md` — API conventions
+- `documentation/coding-guidelines_1773725741509.md` — Code standards
+- `documentation/agent-rules_1773725741507.md` — Agent rules

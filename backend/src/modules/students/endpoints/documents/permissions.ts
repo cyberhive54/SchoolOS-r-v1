@@ -1,0 +1,7 @@
+import { PERMISSIONS } from '@schoolos/config';
+
+export const STUDENT_DOCUMENT_PERMISSIONS = {
+  read:   [PERMISSIONS.STUDENTS_PROFILE_READ],
+  create: [PERMISSIONS.STUDENTS_PROFILE_UPDATE],
+  delete: [PERMISSIONS.STUDENTS_PROFILE_UPDATE],
+} as const;

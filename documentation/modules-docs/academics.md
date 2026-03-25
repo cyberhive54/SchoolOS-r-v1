@@ -12,11 +12,13 @@ Build the Academics module — the foundational academic structure of SchoolOS. 
 - Class teachers can be assigned to class-sections; one class teacher per class-section
 - Subject teachers can be assigned per subject per class-section
 - Students can be bulk-promoted from one class-section to the next at year-end
+- **Timetable period slots can be configured per academic year** (Period 1–8, Lunch, Recess)
+- **Period-by-period class schedule can be built** — each slot assigns a teacher+subject to a class-section on a given day
+- **Daily substitutions can be recorded** — when a teacher is absent, substitute teacher is logged per slot
 - All pages use skeleton loaders during data fetch; empty states have actionable prompts; all mutations give toast feedback
 - Full frontend pages exist for all management screens within a `/dashboard/academics/` route group
 
 ## Out of scope
-- Timetable scheduling (period-by-period scheduling is a separate future module)
 - Online examinations
 - Lesson planning
 - Attendance marking (that is the Attendance module)
@@ -45,23 +47,38 @@ Build the Academics module — the foundational academic structure of SchoolOS. 
 
 11. **Student promotion endpoint** — `POST /v1/academics/promotions` with body: `{ from_academic_year_id, to_academic_year_id, promotions: [{ student_id, from_class_section_id, to_class_section_id, status: 'promoted'|'detained'|'transferred_out' }] }`. This is a bulk async operation (BullMQ job). Returns `202 Accepted` with `job_id`. Requires idempotency key. Permission: `academics.promotion.manage`. Emits `student.promoted` event per student.
 
-12. **Academics NestJS module** — Wire all controllers, services, and repositories into `AcademicsModule`. Register in `AppModule`.
+12. **Academics NestJS module** — Wire all controllers, services, and repositories into `AcademicsModule`. Register in `AppModule`. ✅ Complete — includes timetable controllers/services.
 
-13. **Frontend — Academic Years page** (`/dashboard/academics/years`) — List all academic years in a table (name, start date, end date, current badge, actions). Add/Edit via slide-over form with validation. Skeleton loader on initial load. Set Current action with confirmation dialog. Toast on all mutations.
+13. **DB migration — timetable tables** ✅ Created `011-academics-timetable.ts` with:
+    - `timetable_periods` — period slot definitions per school per academic year (name, period_number, start_time, end_time, is_break)
+    - `timetable_slots` — actual class-section schedule (day_of_week, subject_id, staff_id, is_free_period, effective dates)
+    - `timetable_substitutions` — daily substitution records (absent_staff, substitute_staff, date, slot_id)
 
-14. **Frontend — Classes & Sections page** (`/dashboard/academics/classes`) — Two-panel layout: left shows classes list, right shows sections within selected class. Add class / add section via inline forms. Drag-to-reorder classes (updates `order_index`). Skeleton loaders.
+14. **Timetable Periods endpoints** ✅ — `POST /v1/academics/timetable/periods`, `GET /v1/academics/timetable/periods?academic_year_id=`, `GET /v1/academics/timetable/periods/:id`, `PATCH /v1/academics/timetable/periods/:id`, `DELETE /v1/academics/timetable/periods/:id`. Permission: `academics.timetable.write` / `academics.timetable.read`.
 
-15. **Frontend — Class-Sections management page** (`/dashboard/academics/class-sections`) — Table of all class-sections for selected academic year with columns: Class, Section, Capacity, Class Teacher, Room. Quick assign class teacher inline. Filter by class. Skeleton loader.
+15. **Timetable Slots endpoints** ✅ — `POST /v1/academics/timetable/slots`, `GET /v1/academics/timetable/slots?academic_year_id=&class_section_id=&staff_id=&day_of_week=`, `GET /v1/academics/timetable/slots/:id`, `PATCH /v1/academics/timetable/slots/:id`, `DELETE /v1/academics/timetable/slots/:id`. One slot = one cell in the class timetable grid.
 
-16. **Frontend — Subjects page** (`/dashboard/academics/subjects`) — Searchable subject list with type badge. Add/Edit subject via slide-over. Subject groups sub-page with drag-to-add subject to group. Skeleton loaders.
+16. **Timetable Substitutions endpoints** ✅ — `POST /v1/academics/timetable/substitutions`, `GET /v1/academics/timetable/substitutions?date=&absent_staff_id=`, `GET /v1/academics/timetable/substitutions/:id`, `PATCH /v1/academics/timetable/substitutions/:id`, `DELETE /v1/academics/timetable/substitutions/:id`.
 
-17. **Frontend — Teacher Assignments page** (`/dashboard/academics/assignments`) — Matrix-style view: rows = class-sections, columns = subjects. Click cell to assign teacher from staff dropdown. Save row button. Skeleton loader with shimmer cells. Toast on save.
+17. **Frontend — Academic Years page** (`/dashboard/academics/years`) — List all academic years in a table (name, start date, end date, current badge, actions). Add/Edit via slide-over form with validation. Skeleton loader on initial load. Set Current action with confirmation dialog. Toast on all mutations.
 
-18. **Frontend — Student Promotion page** (`/dashboard/academics/promotion`) — Step wizard: (1) Select from/to academic years; (2) Select class-section to promote; (3) Review student list with per-student action dropdown (Promoted / Detained / Not applicable); (4) Confirm and submit. Progress loader during async job. Poll job status and show completion toast.
+18. **Frontend — Classes & Sections page** (`/dashboard/academics/classes`) — Two-panel layout: left shows classes list, right shows sections within selected class. Add class / add section via inline forms. Drag-to-reorder classes (updates `order_index`). Skeleton loaders.
 
-19. **Frontend — Academics layout and navigation** — Add "Academics" section to dashboard sidebar with sub-links. Protect all routes with `academics.*.manage` permission check on the frontend.
+19. **Frontend — Class-Sections management page** (`/dashboard/academics/class-sections`) — Table of all class-sections for selected academic year with columns: Class, Section, Capacity, Class Teacher, Room. Quick assign class teacher inline. Filter by class. Skeleton loader.
 
-20. **Seed academic data** — Update `seed.ts` to create a demo academic year (2025–26, marked current), 3 classes (Grade 1, Grade 2, Grade 3), 2 sections each (A, B), 5 core subjects (English, Mathematics, Science, Social Studies, Hindi), and wire them into class-sections.
+20. **Frontend — Subjects page** (`/dashboard/academics/subjects`) — Searchable subject list with type badge. Add/Edit subject via slide-over. Subject groups sub-page with drag-to-add subject to group. Skeleton loaders.
+
+21. **Frontend — Teacher Assignments page** (`/dashboard/academics/assignments`) — Matrix-style view: rows = class-sections, columns = subjects. Click cell to assign teacher from staff dropdown. Save row button. Skeleton loader with shimmer cells. Toast on save.
+
+22. **Frontend — Timetable page** (`/dashboard/academics/timetable`) — Grid view: rows = periods (Period 1–8), columns = days (Mon–Fri). Each cell shows subject + teacher name. Click cell to assign/change. Toggle between class view and teacher view. Conflict indicator (teacher double-booked). Publish button makes timetable visible to parents via Parent Portal.
+
+23. **Frontend — Substitution Register page** (`/dashboard/academics/timetable/substitutions`) — Date picker at top (defaults today). Shows all slots with absent teachers. Per-slot: select substitute from staff dropdown. Save button. Print-friendly substitution register view.
+
+24. **Frontend — Student Promotion page** (`/dashboard/academics/promotion`) — Step wizard: (1) Select from/to academic years; (2) Select class-section to promote; (3) Review student list with per-student action dropdown (Promoted / Detained / Not applicable); (4) Confirm and submit. Progress loader during async job. Poll job status and show completion toast.
+
+25. **Frontend — Academics layout and navigation** — Add "Academics" section to dashboard sidebar with sub-links. Protect all routes with `academics.*.manage` permission check on the frontend.
+
+26. **Seed academic data** — Update `seed.ts` to create a demo academic year (2025–26, marked current), 3 classes (Grade 1, Grade 2, Grade 3), 2 sections each (A, B), 5 core subjects (English, Mathematics, Science, Social Studies, Hindi), wire them into class-sections, and create 8 sample timetable periods (Periods 1–7 + Lunch break).
 
 ## Relevant files
 - `backend/src/modules/auth/`
@@ -69,9 +86,17 @@ Build the Academics module — the foundational academic structure of SchoolOS. 
 - `backend/src/modules/platform/permissions/`
 - `backend/src/common/guards/permissions.guard.ts`
 - `backend/src/common/decorators/`
-- `backend/src/database/migrations/001-initial-schema.ts`
+- `backend/src/database/migrations/003-academics-core.ts`
+- `backend/src/database/migrations/004-academics-assignments.ts`
+- `backend/src/database/migrations/011-academics-timetable.ts`
 - `backend/src/database/seeds/seed.ts`
 - `backend/src/config/permissions.ts`
+- `backend/src/modules/academics/entities/timetable-period.entity.ts`
+- `backend/src/modules/academics/entities/timetable-slot.entity.ts`
+- `backend/src/modules/academics/entities/timetable-substitution.entity.ts`
+- `backend/src/modules/academics/endpoints/timetable-periods/`
+- `backend/src/modules/academics/endpoints/timetable-slots/`
+- `backend/src/modules/academics/endpoints/timetable-substitutions/`
 - `frontend/src/components/ui/`
 - `frontend/src/store/auth.store.ts`
 - `frontend/src/lib/api-client.ts`
