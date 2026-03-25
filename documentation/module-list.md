@@ -1219,4 +1219,81 @@ Aggregates data from across modules and formats it for government submission.
 
 ---
 
+# 36 — AI Assistant
+
+## Purpose
+
+Provide a **conversational, read-only AI interface** for every SchoolOS user to query live school data in plain language.
+
+## Responsibilities
+
+Retrieves and presents school data (students, attendance, fees, HR, exams) based on the user's role and permissions. Never makes changes to the system.
+
+## Core Features
+
+- Natural language question answering over live school data
+- Role-scoped data retrieval using user's own JWT token
+- Streaming chat interface (SSE)
+- FAQ cache for zero-cost common queries (fee balance, attendance, timetable)
+- PII filtering (Aadhar, bank details, health records never in AI context)
+- Disambiguation when entity names are ambiguous
+- Multi-language support (Hindi, Tamil, Telugu, Kannada, Marathi, English)
+- Offline graceful degradation
+- Per-user consent and admin oversight panel
+- Token budget tracking per school subscription plan
+
+## What This Module Achieves
+
+- Reduces time staff spend navigating menus to find common information
+- Gives parents 24/7 instant answers on fee dues, attendance, and exam results
+- Establishes the AI infrastructure layer (LLM gateway, context builder, retriever) for the Copilot
+
+## Dependencies
+
+- All Phase 1–4 modules (data to query)
+- LLM API provider (OpenAI / Anthropic via Replit AI proxy)
+- Redis (conversation session cache, FAQ cache, rate limit counters)
+- pgvector on PostgreSQL (future semantic search)
+
+---
+
+# 37 — AI Copilot / Agent
+
+## Purpose
+
+Extend the AI Assistant with **write capability** — allow users to instruct the AI to take actions on their behalf using natural language, with explicit confirmation before every change.
+
+## Responsibilities
+
+Executes write operations (mark attendance, create leave requests, send reminders, enroll students, etc.) using the logged-in user's JWT token. Tracks async BullMQ jobs to completion. Translates all API errors to human-readable guidance.
+
+## Core Features
+
+- Full tool-calling over all permitted API write endpoints
+- Structured confirmation card before every write (action preview with exact parameters)
+- Bulk operations with double-confirmation (type CONFIRM) and irreversibility warnings
+- Async job tracking with live progress streaming for BullMQ operations
+- Human-readable error translation for all API error codes
+- Partial success reporting for bulk operations
+- AI Action Log — admin view of all AI-initiated changes with full audit detail
+- Per-user and school-level Copilot configuration (module access, rate limits)
+- Rate limiting: 10 write actions/hour, 3 bulk ops/day per user
+- Permanent hard-block on destructive/irreversible platform endpoints
+- All AI actions tagged `ai_initiated: true` in existing audit log
+
+## What This Module Achieves
+
+- Dramatically accelerates repetitive admin tasks (bulk attendance, fee reminders, leave management)
+- Maintains full human oversight — AI never acts without explicit user confirmation
+- Keeps the existing PBAC system as the sole enforcement layer — no new permission logic
+
+## Dependencies
+
+- AI Assistant (Module 36) — extends it
+- All Phase 1–7 modules (write endpoints exposed as tools)
+- Redis (rate limit counters, session state)
+- BullMQ (job tracking for async operations)
+
+---
+
 # End of Document
