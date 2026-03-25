@@ -1,4 +1,4 @@
-# Phase 2 — Fees & Billing Module
+# Phase 1 — Fees & Billing Module
 
 ## What & Why
 Build the Fees module — school fee structure definition, invoice generation, and offline payment recording. Layer 5 Financial. Depends on Students (Layer 2) being complete. Academic year and class data from Academics (Layer 2) is also required for fee assignment. Phase 2 covers offline payment only (cash, bank transfer, cheque, UPI). Online payment gateway (Razorpay etc.) is Phase 2.2. The system must support complex Indian school fee structures: multiple fee types, group-based billing cycles, partial payments, discounts, carry-forward of arrears, and per-student overrides.
