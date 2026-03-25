@@ -1,0 +1,14 @@
+{
+  "data": {
+    "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NTBlODQwMC1lMjliLTQxZDQtYTcxNi00NDY2NTU0NDAwMDAiLCJzY2hvb2xfaWQiOiJzY2hvb2wtdXVpZC0xIiwicm9sZSI6InN1cGVyX2FkbWluIiwibWVtYmVyc2hpcF9pZCI6Im1lbWJlcnNoaXAtdXVpZC0xIiwiaWF0IjoxNzA5NjYzNjAwLCJleHAiOjE3MDk2NjQ1MDB9.example",
+    "token_type": "Bearer",
+    "expires_in": 900,
+    "user": {
+      "id": "550e8400-e29b-41d4-a716-446655440000",
+      "email": "admin@demo.schoolos.com",
+      "first_name": "Admin",
+      "last_name": "User",
+      "role": "super_admin"
+    }
+  }
+}

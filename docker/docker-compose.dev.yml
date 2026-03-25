@@ -1,0 +1,113 @@
+version: '3.9'
+
+services:
+  # ── PostgreSQL 16 ──────────────────────────────────────────────────────────
+  postgres:
+    image: postgres:16-alpine
+    container_name: schoolos_postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${DATABASE_NAME:-schoolos}
+      POSTGRES_USER: ${DATABASE_USER:-schoolos}
+      POSTGRES_PASSWORD: ${DATABASE_PASSWORD:-schoolos_dev_password}
+      PGDATA: /var/lib/postgresql/data/pgdata
+    ports:
+      - '5432:5432'
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U ${DATABASE_USER:-schoolos} -d ${DATABASE_NAME:-schoolos}']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── Redis 7 ────────────────────────────────────────────────────────────────
+  redis:
+    image: redis:7-alpine
+    container_name: schoolos_redis
+    restart: unless-stopped
+    command: redis-server --appendonly yes --requirepass ""
+    ports:
+      - '6379:6379'
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ['CMD', 'redis-cli', 'ping']
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ── NestJS API (hot reload) ────────────────────────────────────────────────
+  api:
+    build:
+      context: ../backend
+      dockerfile: Dockerfile.dev
+    container_name: schoolos_api
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    environment:
+      NODE_ENV: development
+      DATABASE_HOST: postgres
+      DATABASE_PORT: 5432
+      DATABASE_URL: postgresql://${DATABASE_USER:-schoolos}:${DATABASE_PASSWORD:-schoolos_dev_password}@postgres:5432/${DATABASE_NAME:-schoolos}
+      DATABASE_SSL_MODE: disable
+      REDIS_HOST: redis
+      REDIS_PORT: 6379
+      REDIS_URL: redis://redis:6379
+      REDIS_PASSWORD: ""
+      COOKIE_SECURE: "false"
+      COOKIE_SAMESITE: strict
+      BCRYPT_ROUNDS: "12"
+    ports:
+      - '4000:4000'
+    volumes:
+      - ../backend:/app
+      - api_node_modules:/app/node_modules
+    healthcheck:
+      test: ['CMD', 'node', '-e', "fetch('http://localhost:4000/v1/healthz').then((r)=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # ── Next.js Web (hot reload) ───────────────────────────────────────────────
+  web:
+    build:
+      context: ../frontend
+      dockerfile: Dockerfile.dev
+    container_name: schoolos_web
+    restart: unless-stopped
+    env_file:
+      - ../.env
+    depends_on:
+      - api
+    environment:
+      NODE_ENV: development
+      # Use service DNS name for in-container requests and rewrites
+      BACKEND_URL: http://api:4000
+      NEXT_PUBLIC_API_URL: http://api:4000/v1
+      NEXT_PUBLIC_PLATFORM_DOMAIN: localhost
+    ports:
+      - '3000:3000'
+    volumes:
+      - ../frontend:/app
+      - web_node_modules:/app/node_modules
+      - web_next_cache:/app/.next
+
+volumes:
+  postgres_data:
+    driver: local
+  redis_data:
+    driver: local
+  api_node_modules:
+    driver: local
+  web_node_modules:
+    driver: local
+  web_next_cache:
+    driver: local

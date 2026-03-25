@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@schoolos/types": ["./dist/types"],
+      "@schoolos/config": ["./dist/config"]
+    }
+  }
+}

@@ -1,0 +1,36 @@
+@import "tailwindcss";
+
+/* ── SchoolOS CSS Custom Properties (injected at runtime per school) ──────── */
+/* Default values — overridden by /v1/school/theme API before first paint */
+:root {
+  --color-primary: #1e40af;
+  --color-secondary: #1e3a8a;
+  --color-accent: #3b82f6;
+  --color-surface: #f8fafc;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --font-heading: 'Inter', system-ui, sans-serif;
+  --font-body: 'Inter', system-ui, sans-serif;
+}
+
+/* ── Base styles ──────────────────────────────────────────────────────────── */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-surface);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-heading);
+}
+
+/* ── Scrollbar ───────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }

@@ -1,0 +1,17 @@
+{
+  "data": {
+    "id": "cs-uuid",
+    "school_id": "school-uuid",
+    "class_id": "class-uuid",
+    "section_id": "section-uuid",
+    "academic_year_id": "year-uuid",
+    "capacity": 40,
+    "room_no": "Room 101",
+    "class_name": "Grade 6",
+    "section_name": "A",
+    "academic_year_name": "2025-26",
+    "class_teacher": null,
+    "created_at": "2025-04-01T00:00:00.000Z",
+    "updated_at": "2025-04-01T00:00:00.000Z"
+  }
+}

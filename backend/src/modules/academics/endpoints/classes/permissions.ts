@@ -1,0 +1,8 @@
+import { PERMISSIONS } from '@schoolos/config';
+
+export const CLASS_PERMISSIONS = {
+  create: [PERMISSIONS.ACADEMICS_CLASS_CREATE],
+  read: [PERMISSIONS.ACADEMICS_CLASS_READ],
+  update: [PERMISSIONS.ACADEMICS_CLASS_UPDATE],
+  delete: [PERMISSIONS.ACADEMICS_CLASS_DELETE],
+} as const;

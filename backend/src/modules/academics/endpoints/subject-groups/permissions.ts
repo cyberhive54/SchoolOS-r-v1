@@ -1,0 +1,5 @@
+import { PERMISSIONS } from '@schoolos/config';
+export const SUBJECT_GROUP_PERMISSIONS = {
+  manage: [PERMISSIONS.ACADEMICS_SUBJECT_GROUP_MANAGE],
+  read: [PERMISSIONS.ACADEMICS_SUBJECT_READ],
+} as const;

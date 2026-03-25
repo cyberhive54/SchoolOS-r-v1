@@ -1,0 +1,7 @@
+{
+  "from_academic_year_id": "year-2024-uuid",
+  "to_academic_year_id": "year-2025-uuid",
+  "from_class_section_id": "cs-grade5a-uuid",
+  "to_class_section_id": "cs-grade6a-uuid",
+  "student_ids": ["student-1-uuid", "student-2-uuid"]
+}
